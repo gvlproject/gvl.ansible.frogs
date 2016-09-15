@@ -1,0 +1,67 @@
+#This is the main install script for the command line version of FROGS. It will install all of the dependencies and clone the repo. We assume linuxbrew is installed and has its paths set appropriately.
+
+  #Clone the repo
+  - name: Clone or update the FROGS repo.
+    git:  repo="https://github.com/geraldinepascal/FROGS.git" dest="{{ FROGS_path }}"
+    become: yes
+    become_user: ubuntu
+    
+    
+  #start on the dependencies....
+  # - name: Install some apt-get packages.
+  #   apt: name="{{ item }}" state=latest
+  #   with_items:
+  #     - util-linux
+  #   become: yes
+  #   become_user: root
+  
+  - name: Update brew!
+    homebrew: update_homebrew=yes
+    environment: "{{ linuxbrew_env }}"
+    ignore_errors: yes
+    become: yes
+    become_user: ubuntu
+    
+  - name: Install some initial brew tools (they should be there already hopefully.)
+    homebrew: name="{{ item }}" state=present
+    environment: "{{ linuxbrew_env}}"
+    become: yes
+    become_user: ubuntu
+    with_items:
+      - python
+      - scipy
+    
+  - name: Install some pip tools (they should be there already hopefully.)
+    pip: name="{{ item }}" state=present
+    environment: "{{ linuxbrew_env }}"
+    become: yes
+    become_user: ubuntu
+    with_items:
+      - scipy
+      - numpy
+      
+  - name: Install the rest of the brew dependencies.
+    homebrew: name="{{ item }}" state=latest
+    environment: "{{ linuxbrew_env }}"
+    become: yes
+    become_user: ubuntu
+    with_items:
+      - flash
+      - cutadapt
+      - swarm
+      - vsearch
+      - blast
+      - util-linux
+      
+  - name: Install the RDP tools
+    git: repo="https://github.com/rdpstaff/RDPTools" dest="{{ gvl_apps_path }}/rdptools" track_submodules="yes"
+    become: yes
+    become_user: ubuntu
+    
+  - name: Make the RDP tools
+    make: chdir="{{ gvl_apps_path }}/rdptools"
+    become: yes
+    become_user: ubuntu
+    
+  - name: Edit all of the galaxy wrapper xml files 
+    

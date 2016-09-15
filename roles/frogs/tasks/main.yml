@@ -1,0 +1,24 @@
+---
+  #check to see if gvl-apps dir is setup and installed
+  - name: Check to see if gvl/apps dir exists and create if required
+    file: name="{{ gvl_apps_home }}" state=directory owner=ubuntu group=ubuntu
+    become: yes
+    become_user: root
+  
+  #Check to see if linuxbrew is installed and if not then do it!  
+  - name: Check to see if linuxbrew is installed
+    command: brew --version
+    register: brew_installed
+    become: yes
+    become_user: ubuntu
+    
+  #If the brew_installed register failed then do the linuxbrew install!!!
+  # - name: Install linuxbrew if required.
+  #Figure out the command to run the install linuxbrew role...    
+  
+  #Firstly, install FROGS
+  - include: install_FROGS.yml
+  
+  #Secondly, modify Galaxy (add tools and irida user)
+  - include: modify_galaxy.yml
+  
