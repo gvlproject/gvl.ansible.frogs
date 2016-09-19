@@ -63,5 +63,5 @@
     become: yes
     become_user: ubuntu
     
-  - name: Edit all of the galaxy wrapper xml files 
+  #- name: Edit all of the galaxy wrapper xml files 
     
